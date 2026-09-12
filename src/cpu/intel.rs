@@ -14,6 +14,34 @@
 
 use cfg_if::cfg_if;
 
+// Racing initializers can still write these flags after FEATURES is published.
+// Keep native reads atomic too, rather than exposing plain C loads.
+#[cfg(target_arch = "x86_64")]
+prefixed_item! {
+    export_name
+    avx2_available_get
+    {
+        extern "C" fn avx2_available_get() -> u32 {
+            prefixed_extern! { static avx2_available: core::sync::atomic::AtomicU32; }
+            // SAFETY: This aligned C object is only accessed using Rust atomics.
+            unsafe { &avx2_available }.load(core::sync::atomic::Ordering::Relaxed)
+        }
+    }
+}
+
+#[cfg(target_arch = "x86_64")]
+prefixed_item! {
+    export_name
+    adx_bmi2_available_get
+    {
+        extern "C" fn adx_bmi2_available_get() -> u32 {
+            prefixed_extern! { static adx_bmi2_available: core::sync::atomic::AtomicU32; }
+            // SAFETY: This aligned C object is only accessed using Rust atomics.
+            unsafe { &adx_bmi2_available }.load(core::sync::atomic::Ordering::Relaxed)
+        }
+    }
+}
+
 mod abi_assumptions {
     use core::mem::size_of;
 
@@ -244,10 +272,8 @@ fn cpuid_to_caps_and_set_c_flags(cpuid: &[u32; 4]) -> u32 {
         prefixed_extern! {
             static avx2_available: AtomicU32;
         }
-        // SAFETY: The C code only reads `avx2_available`, and its reads are
-        // synchronized through the `OnceNonZeroUsize` Acquire/Release
-        // semantics as we ensure we have a `cpu::Features` instance before
-        // calling into the C code.
+        // SAFETY: Native reads use avx2_available_get's atomic load. The C
+        // object's alignment matches AtomicU32, as asserted above.
         let flag = unsafe { &avx2_available };
         flag.store(1, core::sync::atomic::Ordering::Relaxed);
     }
@@ -318,10 +344,8 @@ fn cpuid_to_caps_and_set_c_flags(cpuid: &[u32; 4]) -> u32 {
             prefixed_extern! {
                 static adx_bmi2_available: AtomicU32;
             }
-            // SAFETY: The C code only reads `adx_bmi2_available`, and its
-            // reads are synchronized through the `OnceNonZeroUsize`
-            // Acquire/Release semantics as we ensure we have a
-            // `cpu::Features` instance before calling into the C code.
+            // SAFETY: Native reads use adx_bmi2_available_get's atomic load.
+            // The C object's alignment matches AtomicU32, as asserted above.
             let flag = unsafe { &adx_bmi2_available };
             flag.store(1, core::sync::atomic::Ordering::Relaxed);
         }

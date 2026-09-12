@@ -342,10 +342,9 @@ fn ring_build_rs_main(c_root_dir: &Path, core_name_and_version: &str) {
     // without a prerequisite `package` step, at the cost of needing additional
     // tools like `Perl` and/or `nasm`.
     //
-    // If `.git` doesn't exist then assume that this is a packaged build where
-    // we want to optimize for minimizing the build tools required: No Perl,
-    // no nasm, etc.
-    let generated_dir = if !is_git {
+    // Reuse packaged sources when present. Vendored Git dependencies lack
+    // both `.git` and `pregenerated`, so they still need source generation.
+    let generated_dir = if !is_git && c_root_dir.join(PREGENERATED).is_dir() {
         c_root_dir.join(PREGENERATED)
     } else {
         generate_sources_and_preassemble(
@@ -860,7 +859,9 @@ fn prefix_all_symbols(pp: char, prefix_prefix: &str, prefix: &str) -> String {
 
     static SYMBOLS_TO_PREFIX: &[&str] = &[
         "adx_bmi2_available",
+        "adx_bmi2_available_get",
         "avx2_available",
+        "avx2_available_get",
         "CRYPTO_memcmp",
         "CRYPTO_poly1305_finish",
         "CRYPTO_poly1305_finish_neon",
@@ -963,6 +964,7 @@ fn prefix_all_symbols(pp: char, prefix_prefix: &str, prefix: &str) -> String {
         "ecp_nistz256_select_w5",
         "ecp_nistz256_select_w7",
         "neon_available",
+        "neon_available_get",
         "p256_mul_mont",
         "p256_point_add",
         "p256_point_add_affine",

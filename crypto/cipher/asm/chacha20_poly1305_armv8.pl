@@ -895,6 +895,7 @@ $code.=<<___;
 
     stp  $acc0, $acc1, [$keyp]
 
+.cfi_remember_state
     ldp d8, d9, [sp, #16]
     ldp d10, d11, [sp, #32]
     ldp d12, d13, [sp, #48]
@@ -915,6 +916,7 @@ $code.=<<___;
     ret
 
 .Lseal_128:
+.cfi_restore_state
     // On some architectures preparing 5 blocks for small buffers is wasteful
     eor $INC.16b, $INC.16b, $INC.16b
     mov $t0, #1
@@ -1516,6 +1518,7 @@ $code.=<<___;
 
     stp  $acc0, $acc1, [$keyp]
 
+.cfi_remember_state
     ldp	d8, d9, [sp, #16]
     ldp	d10, d11, [sp, #32]
     ldp	d12, d13, [sp, #48]
@@ -1536,6 +1539,7 @@ $code.=<<___;
     ret
 
 .Lopen_128:
+.cfi_restore_state
     // On some architectures preparing 5 blocks for small buffers is wasteful
     eor $INC.16b, $INC.16b, $INC.16b
     mov $t0, #1

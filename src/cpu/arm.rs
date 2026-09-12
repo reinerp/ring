@@ -14,6 +14,25 @@
 
 use super::CAPS_STATIC;
 
+#[cfg(target_arch = "arm")]
+prefixed_item! {
+    export_name
+    neon_available_get
+    {
+        extern "C" fn neon_available_get() -> u32 {
+            #[cfg(target_has_atomic = "32")]
+            {
+                prefixed_extern! { static neon_available: core::sync::atomic::AtomicU32; }
+                // SAFETY: C declares this object with AtomicU32's alignment;
+                // all accesses use Rust atomics, including racing initializers.
+                unsafe { &neon_available }.load(core::sync::atomic::Ordering::Relaxed)
+            }
+            #[cfg(not(target_has_atomic = "32"))]
+            { 0 } // The corresponding writer is disabled on these targets.
+        }
+    }
+}
+
 mod abi_assumptions {
     use core::mem::size_of;
 
@@ -124,10 +143,8 @@ pub(super) mod featureflags {
                 prefixed_extern! {
                     static neon_available: AtomicU32;
                 }
-                // SAFETY: The C code only reads `neon_available`, and its
-                // reads are synchronized through the `OnceNonZeroUsize`
-                // Acquire/Release semantics as we ensure we have a
-                // `cpu::Features` instance before calling into the C code.
+                // SAFETY: Native reads use neon_available_get's atomic load,
+                // including while another CPU initializer is still running.
                 let p = unsafe { &neon_available };
                 p.store(1, Ordering::Relaxed);
             }

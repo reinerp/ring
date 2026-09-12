@@ -3223,16 +3223,7 @@ mul_handler:
 	cmp	%r10,%rbx		# context->Rip>=epilogue label
 	jae	.Lcommon_seh_tail
 
-	lea	.Lmul4x_epilogue(%rip),%r10 # *ring*: hacked for deletion of _nohw
-	cmp	%r10,%rbx
-	ja	.Lbody_40
-
-	mov	192($context),%r10	# pull $num
-	mov	8(%rax,%r10,8),%rax	# pull saved stack pointer
-
-	jmp	.Lcommon_pop_regs
-
-.Lbody_40:
+	# All retained routines save the original stack pointer at offset 40.
 	mov	40(%rax),%rax		# pull saved stack pointer
 .Lcommon_pop_regs:
 	mov	-8(%rax),%rbx

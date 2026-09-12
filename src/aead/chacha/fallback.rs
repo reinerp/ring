@@ -40,7 +40,7 @@ pub(super) fn ChaCha20_ctr32(key: &Key, counter: Counter, mut in_out: Overlappin
     let mut buf = [0u8; BLOCK_LEN];
     while in_out_len > 0 {
         chacha_core(&mut buf, &state);
-        state[12] += 1;
+        state[12] = state[12].wrapping_add(1);
 
         debug_assert_eq!(in_out_len, in_out.len());
 

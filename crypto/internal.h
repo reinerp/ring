@@ -461,14 +461,14 @@ static inline void CRYPTO_store_u32_be(void *out, uint32_t v) {
 // and AVX512 bits in XCR0, so it is not necessary to check those. (WARNING: See
 // caveats in cpu_intel.c.)
 #if defined(OPENSSL_X86_64)
-extern uint32_t avx2_available;
-extern uint32_t adx_bmi2_available;
+uint32_t avx2_available_get(void);
+uint32_t adx_bmi2_available_get(void);
 #endif
 #endif
 
 
 #if defined(OPENSSL_ARM)
-extern alignas(4) uint32_t neon_available;
+uint32_t neon_available_get(void);
 #endif  // OPENSSL_ARM
 
 #endif  // OPENSSL_HEADER_CRYPTO_INTERNAL_H

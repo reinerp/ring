@@ -122,8 +122,7 @@ static inline void bn_mul_mont_small(
     // Approximate what `bn_mul_mont` did so that the NEON version for P-256
     // when practical.
     if (num == 8) {
-        // XXX: This should not be accessing `neon_available` directly.
-        if (neon_available) {
+        if (neon_available_get()) {
             bn_mul8x_mont_neon(rp, ap, bp, np, n0, num);
             return;
         }

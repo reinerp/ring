@@ -130,7 +130,7 @@ static BN_ULONG is_not_zero(BN_ULONG in) {
        void ecp_nistz256_mul_mont(BN_ULONG res[P256_LIMBS],
                                   const BN_ULONG a[P256_LIMBS],
                                   const BN_ULONG b[P256_LIMBS]) {
-  if (adx_bmi2_available) {
+  if (adx_bmi2_available_get()) {
     ecp_nistz256_mul_mont_adx(res, a, b);
   } else {
     ecp_nistz256_mul_mont_nohw(res, a, b);
@@ -139,7 +139,7 @@ static BN_ULONG is_not_zero(BN_ULONG in) {
 
        void ecp_nistz256_sqr_mont(BN_ULONG res[P256_LIMBS],
                                   const BN_ULONG a[P256_LIMBS]) {
-  if (adx_bmi2_available) {
+  if (adx_bmi2_available_get()) {
     ecp_nistz256_sqr_mont_adx(res, a);
   } else {
     ecp_nistz256_sqr_mont_nohw(res, a);
@@ -149,7 +149,7 @@ static BN_ULONG is_not_zero(BN_ULONG in) {
        void ecp_nistz256_ord_mul_mont(BN_ULONG res[P256_LIMBS],
                                       const BN_ULONG a[P256_LIMBS],
                                       const BN_ULONG b[P256_LIMBS]) {
-  if (adx_bmi2_available) {
+  if (adx_bmi2_available_get()) {
     ecp_nistz256_ord_mul_mont_adx(res, a, b);
   } else {
     ecp_nistz256_ord_mul_mont_nohw(res, a, b);
@@ -159,7 +159,7 @@ static BN_ULONG is_not_zero(BN_ULONG in) {
        void ecp_nistz256_ord_sqr_mont(BN_ULONG res[P256_LIMBS],
                                       const BN_ULONG a[P256_LIMBS],
                                       BN_ULONG rep) {
-  if (adx_bmi2_available) {
+  if (adx_bmi2_available_get()) {
     ecp_nistz256_ord_sqr_mont_adx(res, a, rep);
   } else {
     ecp_nistz256_ord_sqr_mont_nohw(res, a, rep);
@@ -168,7 +168,7 @@ static BN_ULONG is_not_zero(BN_ULONG in) {
 
 static void ecp_nistz256_select_w5(P256_POINT *val, const P256_POINT in_t[16],
                                    int index) {
-  if (avx2_available) {
+  if (avx2_available_get()) {
     ecp_nistz256_select_w5_avx2(val, in_t, index);
   } else {
     ecp_nistz256_select_w5_nohw(val, in_t, index);
@@ -178,7 +178,7 @@ static void ecp_nistz256_select_w5(P256_POINT *val, const P256_POINT in_t[16],
 static void ecp_nistz256_select_w7(P256_POINT_AFFINE *val,
                                    const P256_POINT_AFFINE in_t[64],
                                    int index) {
-  if (avx2_available) {
+  if (avx2_available_get()) {
     ecp_nistz256_select_w7_avx2(val, in_t, index);
   } else {
     ecp_nistz256_select_w7_nohw(val, in_t, index);
@@ -186,7 +186,7 @@ static void ecp_nistz256_select_w7(P256_POINT_AFFINE *val,
 }
 
        void ecp_nistz256_point_double(P256_POINT *r, const P256_POINT *a) {
-  if (adx_bmi2_available) {
+  if (adx_bmi2_available_get()) {
     ecp_nistz256_point_double_adx(r, a);
   } else {
     ecp_nistz256_point_double_nohw(r, a);
@@ -195,7 +195,7 @@ static void ecp_nistz256_select_w7(P256_POINT_AFFINE *val,
 
        void ecp_nistz256_point_add(P256_POINT *r, const P256_POINT *a,
                                    const P256_POINT *b) {
-  if (adx_bmi2_available) {
+  if (adx_bmi2_available_get()) {
     ecp_nistz256_point_add_adx(r, a, b);
   } else {
     ecp_nistz256_point_add_nohw(r, a, b);
@@ -204,7 +204,7 @@ static void ecp_nistz256_select_w7(P256_POINT_AFFINE *val,
 
        void ecp_nistz256_point_add_affine(P256_POINT *r, const P256_POINT *a,
                                           const P256_POINT_AFFINE *b) {
-  if (adx_bmi2_available) {
+  if (adx_bmi2_available_get()) {
     ecp_nistz256_point_add_affine_adx(r, a, b);
   } else {
     ecp_nistz256_point_add_affine_nohw(r, a, b);

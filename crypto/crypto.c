@@ -13,6 +13,7 @@
 // limitations under the License.
 
 #include <ring-core/base.h>
+#include "internal.h"
 
 // Our assembly does not use the GOT to reference symbols, which means
 // references to visible symbols will often require a TEXTREL. This is
@@ -30,5 +31,5 @@
 HIDDEN uint32_t avx2_available = 0;
 HIDDEN uint32_t adx_bmi2_available = 0;
 #elif defined(OPENSSL_ARM)
-HIDDEN uint32_t neon_available = 0;
+HIDDEN alignas(4) uint32_t neon_available = 0;
 #endif
