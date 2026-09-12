@@ -342,10 +342,9 @@ fn ring_build_rs_main(c_root_dir: &Path, core_name_and_version: &str) {
     // without a prerequisite `package` step, at the cost of needing additional
     // tools like `Perl` and/or `nasm`.
     //
-    // If `.git` doesn't exist then assume that this is a packaged build where
-    // we want to optimize for minimizing the build tools required: No Perl,
-    // no nasm, etc.
-    let generated_dir = if !is_git {
+    // Reuse packaged sources when present. Vendored Git dependencies lack
+    // both `.git` and `pregenerated`, so they still need source generation.
+    let generated_dir = if !is_git && c_root_dir.join(PREGENERATED).is_dir() {
         c_root_dir.join(PREGENERATED)
     } else {
         generate_sources_and_preassemble(

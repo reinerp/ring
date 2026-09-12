@@ -1495,6 +1495,7 @@ $code.=<<___;
 	mov	%r15,240($context)	# restore context->R15
 
 	lea	.Lepilogue(%rip),%r10
+	mov	248($context),%rbx	# reload interrupted Rip after restoring Rbx
 	cmp	%r10,%rbx
 	jb	.Lin_prologue		# non-AVX code
 
